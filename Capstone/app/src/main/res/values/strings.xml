@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">SoFia</string>
+    <string name="home">Home</string>
+    <string name="saldo">Saldo</string>
+    <string name="profile">Profile</string>
+    <string name="email">Email</string>
+    <string name="message_login_page">Input Data</string>
+    <string name="title_login_page">Login</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="don_t_have_account">Don\'t have account?</string>
+    <string name="register">Register</string>
+    <string name="fab_view">fabView</string>
+    <string name="message_judul">Input Item Product</string>
+    <string name="nama_produk">Nama Produk</string>
+    <string name="jumlah_produk">Jumlah Produk</string>
+    <string name="harga">Harga</string>
+    <string name="save_product">Save Product</string>
+</resources>
