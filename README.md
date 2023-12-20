@@ -1,4 +1,4 @@
-# Sofia-backend
+# Sofia-Project
 Repository Project team capstone bangkit
 
 # Project Name		: SoFia
