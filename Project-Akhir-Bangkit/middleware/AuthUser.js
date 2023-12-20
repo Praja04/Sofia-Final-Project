@@ -6,10 +6,10 @@ export const verifyUser = async (req, res, next) =>{
     }
     const user = await User.findOne({
         where: {
-            id: req.session.userId
+            user_id: req.session.userId  // Ganti 'id' menjadi 'user_id'
         }
     });
     if(!user) return res.status(404).json({msg: "User Tidak Ditemukan"})
-    req.userId = user.id;
+    req.userId = user.user_id;  // Ganti 'id' menjadi 'user_id'
     next();
 }

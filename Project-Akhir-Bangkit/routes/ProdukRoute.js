@@ -4,7 +4,8 @@ import {
     getProductsById,
     createProducts,
     updateProducts,
-    deleteProducts
+    deleteProducts,
+    getStokProducts
 } from "../controllers/Produk.js";
 import { verifyUser } from "../middleware/AuthUser.js";
 
@@ -16,5 +17,6 @@ router.get('/products/:id', verifyUser, getProductsById);
 router.post('/products', verifyUser, createProducts);
 router.patch('/products/:id', verifyUser, updateProducts);
 router.delete('/products/:id', verifyUser, deleteProducts);
+router.get('/products/stok/:id',verifyUser, getStokProducts);
 
 export default router;

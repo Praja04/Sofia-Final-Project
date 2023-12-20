@@ -1,40 +1,49 @@
+
 import { Sequelize } from "sequelize";
 import db from "../config/Database.js";
 
-const {DataTypes} = Sequelize;
+const { DataTypes } = Sequelize;
 
-const Users = db.define('users', {
-    id:{
+const User = db.define('users', {
+    user_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
     },
-    nama:{
+    nama: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate:{
+        validate: {
             notEmpty: true,
-            len: [3, 100]
+            len: [3, 255]
         }
     },
-    email:{
+    password: {
         type: DataTypes.STRING,
         allowNull: false,
-        validate:{
+        validate: {
+            notEmpty: true
+        }
+    },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
             notEmpty: true,
             isEmail: true
         }
     },
-    password:{
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate:{
-            notEmpty: true
+    saldo: {
+        type: DataTypes.DOUBLE,  // Ini adalah kolom untuk saldo
+        allowNull: true,
+        validate: {
+            notEmpty: false
         }
     }
 }, {
-    freezeTableName: true
+    freezeTableName: true,
+    timestamps: true // Menambahkan createdAt dan updatedAt
 });
 
-export default Users
+export default User;

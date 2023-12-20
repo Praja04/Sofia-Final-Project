@@ -6,6 +6,9 @@ import db from "./config/Database.js";
 import SequelizeStore from "connect-session-sequelize";
 import AuthRoute from "./routes/AuthRoute.js";
 import ProdukRoute from "./routes/ProdukRoute.js";
+import Transaksi from "./models/TransaksiModel.js";
+import TransaksiRoute from "./routes/TransaksiRoute.js";
+import bodyParser from "body-parser";
 // import jwt = require('jsonwebtoken'); 
 
 const app = express(); 
@@ -13,6 +16,7 @@ const app = express();
 // Generate Table
  (async ()=>{
      await db.sync();
+     await Transaksi.sync(); 
  })()
 
 const sessionStore = SequelizeStore(session.Store);
@@ -39,9 +43,14 @@ app.use(cors({
     credentials: true, //Mengirim cookies dan session dari frontend
     origin: 'http://localhost:3000' //Domain untuk mengakses API
 }));
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(AuthRoute);
 app.use(ProdukRoute);
+app.use(TransaksiRoute);
 
 // Test API
 app.get("/", (req, res) => {
