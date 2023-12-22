@@ -14,5 +14,15 @@ Repository Project team capstone bangkit
 Title of the Project:
 SME Financial Management: “SOFIA: Sobat Finansial”
 
+SOFIA (Sobat Finansial) is a financial management application and recommendations for selling goods and allows checking transactions.
+
+
 # Dokumentasi Backend Api Sofia
 https://documenter.getpostman.com/view/30251898/2s9Ykq5zun
+
+# Dataset Machine Learning
+https://www.kaggle.com/datasets/mohamedharris/supermart-grocery-sales-retail-analytics-dataset
+
+# Link Application
+https://drive.google.com/drive/folders/1NqCNwd5DWX0OOvuj5eVqy9vNA4pDDpaO?usp=drive_link
+
