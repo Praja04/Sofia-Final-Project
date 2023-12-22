@@ -1,15 +1,23 @@
 import User from "../models/UserModel.js";
+import jwt from 'jsonwebtoken';
+export const verifyUser = async (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
 
-export const verifyUser = async (req, res, next) =>{
-    if(!req.session.userId){
-        return res.status(401).json({msg: "Mohon login dahulu"});
+    if (!token) {
+        return res.status(401).json({ msg: "Token not provided" });
     }
-    const user = await User.findOne({
-        where: {
-            user_id: req.session.userId  // Ganti 'id' menjadi 'user_id'
+
+    try {
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findByPk(decodedToken.userId);
+
+        if (!user) {
+            return res.status(404).json({ msg: "User not found" });
         }
-    });
-    if(!user) return res.status(404).json({msg: "User Tidak Ditemukan"})
-    req.userId = user.user_id;  // Ganti 'id' menjadi 'user_id'
-    next();
-}
+
+        req.userId = user.user_id;
+        next();
+    } catch (error) {
+        res.status(401).json({ msg: "Invalid token" });
+    }
+};

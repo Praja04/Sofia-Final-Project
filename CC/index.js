@@ -9,7 +9,7 @@ import ProdukRoute from "./routes/ProdukRoute.js";
 import Transaksi from "./models/TransaksiModel.js";
 import TransaksiRoute from "./routes/TransaksiRoute.js";
 import bodyParser from "body-parser";
-// import jwt = require('jsonwebtoken'); 
+ import jwt from ('jsonwebtoken'); 
 
 const app = express(); 
 
@@ -26,6 +26,7 @@ const store = new sessionStore({
 })
 // Menyimpan KEY 
 dotenv.config(); 
+
 
 const PORT = process.env.PORT || 5000; 
 

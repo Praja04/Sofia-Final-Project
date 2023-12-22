@@ -2,12 +2,19 @@ import Transaksi from "../models/TransaksiModel.js";
 import Saldo from "../models/SaldoModel.js";
 import Produk from "../models/ProdukModel.js";
 import User from "../models/UserModel.js";
+import jwt from 'jsonwebtoken';
 
 export const getTransaksi = async (req, res) => {
     try {
+         // Mendapatkan token dari header Authorization
+    const token = req.headers.authorization.split(' ')[1];
+
+    // Melakukan verifikasi token
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
         const transaksi = await Transaksi.findAll({
             where: {
-                user_id: req.userId
+                user_id: decodedToken.userId
             }
         });
         res.status(200).json(transaksi);
@@ -18,10 +25,16 @@ export const getTransaksi = async (req, res) => {
 
 export const getTransaksiById = async (req, res) => {
     try {
+         // Mendapatkan token dari header Authorization
+    const token = req.headers.authorization.split(' ')[1];
+
+    // Melakukan verifikasi token
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
         const transaksi = await Transaksi.findOne({
             where: {
                 transaksi_id: req.params.id,
-                user_id: req.userId
+                user_id: decodedToken.userId
             }
         });
         if (!transaksi) return res.status(404).json({ msg: "Data Tidak Ditemukan" });
@@ -32,8 +45,14 @@ export const getTransaksiById = async (req, res) => {
 }
 
 export const createTransaksi = async (req, res) => {
+     // Mendapatkan token dari header Authorization
+     const token = req.headers.authorization.split(' ')[1];
+
+     // Melakukan verifikasi token
+     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+ 
     const { nama_barang, jumlah } = req.body;
-    const user_id = req.session.userId; // Ambil user_id dari sesi
+    const user_id = decodedToken.userId; // Ambil user_id dari sesi
     try {
         const existingTransaksi = await Transaksi.findOne({
             where: {
@@ -47,7 +66,7 @@ export const createTransaksi = async (req, res) => {
         const product = await Produk.findOne({
             where: {
                 nama_barang,
-                user_id: req.userId
+                user_id: user_id
             }
         });
 
@@ -75,7 +94,7 @@ export const createTransaksi = async (req, res) => {
         );
 
         await Transaksi.create({
-            user_id: req.userId,
+            user_id: user_id,
             nama_barang,
             jumlah,
             total_harga,
@@ -101,10 +120,16 @@ export const createTransaksi = async (req, res) => {
 
 export const updateTransaksi = async (req, res) => {
     try {
+         // Mendapatkan token dari header Authorization
+    const token = req.headers.authorization.split(' ')[1];
+
+    // Melakukan verifikasi token
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
         const transaksi = await Transaksi.findOne({
             where: {
                 transaksi_id: req.params.id,
-                user_id: req.userId
+                user_id: decodedToken.userId
             }
         });
         if (!transaksi) return res.status(404).json({ msg: "Data Tidak Ditemukan" });
@@ -125,10 +150,16 @@ export const updateTransaksi = async (req, res) => {
 
 export const deleteTransaksi = async (req, res) => {
     try {
+         // Mendapatkan token dari header Authorization
+    const token = req.headers.authorization.split(' ')[1];
+
+    // Melakukan verifikasi token
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
         const transaksi = await Transaksi.findOne({
             where: {
                 transaksi_id: req.params.id,
-                user_id: req.userId
+                user_id: decodedToken.userId
             }
         });
         if (!transaksi) return res.status(404).json({ msg: "Data Tidak Ditemukan" });

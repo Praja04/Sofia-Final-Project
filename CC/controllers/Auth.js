@@ -1,3 +1,4 @@
+import jwt from 'jsonwebtoken';
 import User from "../models/UserModel.js";
 import argon2 from "argon2";
 import Saldo from "../models/SaldoModel.js";
@@ -20,60 +21,90 @@ export const Register = async (req, res) => {
 
 // Login
 export const Login = async (req, res) => {
-    const user = await User.findOne({
-        where: {
-            email: req.body.email
+    const { email, password } = req.body;
+
+    try {
+        const user = await User.findOne({
+            where: {
+                email: email
+            }
+        });
+
+        if (!user) {
+            return res.status(404).json({ msg: "Email atau password salah" });
         }
-    });
-    // Verifikasi user
-    if (!user) return res.status(404).json({ response: "User Tidak Ditemukan" });
-    const match = await argon2.verify(user.password, req.body.password);
-    if (!match) return res.status(400).json({ response: "Password Salah" });
-    req.session.userId = user.user_id;
-    const user_id = user.user_id;
-    const nama = user.nama;
-    const email = user.email;
-    res.status(200).json({
-        response: "Berhasil Login",
-        data: {
-            user_id: user_id,
-            nama: nama,
-            email: email
+
+        const validPassword = await argon2.verify(user.password, password);
+
+        if (!validPassword) {
+            return res.status(400).json({ msg: "Email atau password salah" });
         }
-    });
-}
+
+        // Create and sign a token
+        const token = jwt.sign({ userId: user.user_id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        res.status(200).json({ token, msg: "Login Successful" });
+    } catch (error) {
+        res.status(500).json({ msg: error.message });
+    }
+};
 
 // Melihat data sendiri
 export const Me = async (req, res) => {
-    if (!req.session.userId) {
-        return res.status(401).json({ response: "Mohon login dahulu" });
-    }
-    const user = await User.findOne({
-        attributes: ['user_id', 'nama', 'email'],
-        where: {
-            user_id: req.session.userId
+    try {
+        // Extract token from header
+        const token = req.headers.authorization.split(' ')[1];
+
+        // Verify token
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Get user information from token
+        const user = await User.findByPk(decodedToken.userId);
+
+        if (!user) {
+            return res.status(404).json({ response: "User not found" });
         }
-    });
-    if (!user) return res.status(404).json({ response: "User Tidak Ditemukan" });
-    res.status(200).json(user);
+
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(401).json({ response: "Invalid token" });
+    }
 }
 
-// Logout
+// Logout Endpoint
 export const Logout = (req, res) => {
-    if (!req.session.userId) {
-        return res.status(401).json({ response: "Mohon login dahulu" });
+    try {
+        // Extract token from header
+        const token = req.headers.authorization.split(' ')[1];
+
+        // Destroy session on the server
+        req.session.destroy((err) => {
+            if (err) return res.status(400).json({ response: "Unable to logout" });
+
+            // Log user out by sending a new token with a short expiration time
+            const expiredToken = jwt.sign({}, process.env.JWT_SECRET, { expiresIn: '1s' });
+
+            // Send the expired token to the client, forcing it to logout
+            res.status(200).json({ token: expiredToken, response: "Logout successful" });
+        });
+    } catch (error) {
+        res.status(500).json({ response: error.message });
     }
-    req.session.destroy((err) => {
-        if (err) return res.status(400).json({ response: "Tidak dapat logout" });
-        res.status(200).json({ response: "Anda berhasil logout" });
-    });
-}
+};
+
 
 
 //ambil saldo
 export const withdrawSaldo = async (req, res) => {
+
+     // Mendapatkan token dari header Authorization
+     const token = req.headers.authorization.split(' ')[1];
+
+     // Melakukan verifikasi token
+     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+ 
     const { jumlahPenarikan } = req.body;
-    const userId = req.session.userId;
+    const userId = decodedToken.userId;
 
     try {
         // Pastikan userId ditemukan
@@ -113,7 +144,13 @@ export const withdrawSaldo = async (req, res) => {
 
 
 export const getSaldo = async (req, res) => {
-    const user_id = req.session.userId;
+     // Mendapatkan token dari header Authorization
+     const token = req.headers.authorization.split(' ')[1];
+
+     // Melakukan verifikasi token
+     const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+ 
+    const user_id = decodedToken.userId;
     try {
         const userSaldo = await Saldo.findAll({
             where: {
