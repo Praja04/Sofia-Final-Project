@@ -1,6 +1,6 @@
 # Sofia-Project
 Repository Project team capstone bangkit
-
+# SOFIA (Sobat Finansial) is a financial management application and recommendations for selling goods and allows checking transactions.
 # Project Name		: SoFia
 # Team ID		: CH2-PS532
 * Team Member		: 
@@ -14,7 +14,7 @@ Repository Project team capstone bangkit
 Title of the Project:
 SME Financial Management: “SOFIA: Sobat Finansial”
 
-SOFIA (Sobat Finansial) is a financial management application and recommendations for selling goods and allows checking transactions.
+
 
 
 # Dokumentasi Backend Api Sofia
